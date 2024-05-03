@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormEventHandler, useState } from "react";
-import { supabase } from "@/utils/supabase";
+import { supabase } from "@/utils/supabase/client";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
