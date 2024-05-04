@@ -3,7 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import VerificationComponent from "@/components/verificationUI";
 import { useSignUp } from "@clerk/nextjs";
-import { useState } from "react";
+import { FormEventHandler, useState } from "react";
 
 const SignupPage = () => {
   const { isLoaded, signUp, setActive } = useSignUp();
@@ -15,7 +15,10 @@ const SignupPage = () => {
   const [lastname, setLastName] = useState("");
   const [pendingVerification, setPendingVerification] = useState(false);
 
-  const createUserAccount = async (formData: FormData) => {
+  const createUserAccount: FormEventHandler<HTMLFormElement> = async (
+    event
+  ) => {
+    event.preventDefault();
     if (!isLoaded) {
       return;
     }
@@ -23,11 +26,10 @@ const SignupPage = () => {
     try {
       const signup = await signUp.create({
         emailAddress: email,
-        username,
         password,
-        firstName: firstname,
-        lastName: lastname,
       });
+
+      console.log(signup);
 
       const sendVerificationEmail =
         await signUp.prepareEmailAddressVerification({
@@ -45,10 +47,11 @@ const SignupPage = () => {
         {!pendingVerification ? (
           <>
             <h1 className="text-2xl mb-8">Create your account</h1>
-            <form action={createUserAccount} className="grid gap-[20px]">
+            <form onSubmit={createUserAccount} className="grid gap-[20px]">
               <div>
                 <Input
                   value={firstname}
+                  type="text"
                   placeholder="Firstname"
                   onChange={(event) => setFirstname(event.target.value)}
                 />
@@ -56,6 +59,7 @@ const SignupPage = () => {
               <div>
                 <Input
                   value={lastname}
+                  type="text"
                   placeholder="Lastname"
                   onChange={(event) => setLastName(event.target.value)}
                 />
@@ -63,6 +67,7 @@ const SignupPage = () => {
               <div>
                 <Input
                   value={username}
+                  type="text"
                   placeholder="Username"
                   onChange={(event) => setUsername(event.target.value)}
                 />
@@ -70,6 +75,7 @@ const SignupPage = () => {
               <div>
                 <Input
                   value={email}
+                  type="email"
                   placeholder="Your email"
                   onChange={(event) => setEmail(event.target.value)}
                 />
