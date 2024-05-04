@@ -12,6 +12,7 @@ export default function Home() {
       <SignedIn>
         <h1>You are currently authenticated</h1>
         <SignOutButton />
+        <UserButton />
       </SignedIn>
       <SignedOut>
         <SignInButton />
