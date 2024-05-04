@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import VerificationComponent from "@/components/verificationUI";
-import { useSignUp } from "@clerk/nextjs";
+import { SignInButton, useSignUp } from "@clerk/nextjs";
 import { FormEventHandler, useState } from "react";
 
 const SignupPage = () => {
@@ -19,6 +19,7 @@ const SignupPage = () => {
     event
   ) => {
     event.preventDefault();
+    console.log(password);
     if (!isLoaded || !signUp) {
       return;
     }
@@ -26,7 +27,7 @@ const SignupPage = () => {
     try {
       const signup = await signUp.create({
         emailAddress: email,
-        password,
+        password: "ImagineDragons1@",
       });
 
       console.log(signup);
@@ -44,6 +45,7 @@ const SignupPage = () => {
   return (
     <div className=" min-h-screen grid items-center justify-center">
       <div className="w-[400px]">
+        <SignInButton mode="modal" />
         {!pendingVerification ? (
           <>
             <h1 className="text-2xl mb-8">Create your account</h1>

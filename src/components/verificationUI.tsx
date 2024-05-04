@@ -3,13 +3,15 @@ import { FormEventHandler, useState } from "react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useSignUp } from "@clerk/nextjs";
+import { useRouter } from "next/navigation";
 type ComponentType = {
   email: string;
 };
 
 const VerificationComponent: React.FC<ComponentType> = ({ email }) => {
   const [code, setCode] = useState("");
-  const { isLoaded, signUp } = useSignUp();
+  const { isLoaded, signUp, setActive } = useSignUp();
+  const navigator = useRouter();
 
   const validateEmailAddress: FormEventHandler<HTMLFormElement> = async (
     event
@@ -17,7 +19,11 @@ const VerificationComponent: React.FC<ComponentType> = ({ email }) => {
     event.preventDefault();
     if (!isLoaded || code.trim() === "") return;
     try {
-      await signUp?.attemptEmailAddressVerification({ code });
+      const activate = await signUp?.attemptEmailAddressVerification({ code });
+      if (activate.status === "complete") {
+        await setActive({ session: activate.createdSessionId });
+        navigator.push("/home");
+      }
     } catch (error) {
       console.log(error);
     }
