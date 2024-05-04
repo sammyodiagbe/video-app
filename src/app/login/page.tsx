@@ -2,34 +2,23 @@
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { FormEventHandler, useState } from "react";
-import { supabase } from "@/utils/supabase/client";
+import { useState } from "react";
+import { login } from "./action";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  console.log(process.env.SUPABASE_URL);
-  const logUserIn: FormEventHandler<HTMLFormElement> = async (event) => {
-    event.preventDefault();
-    try {
-      const signin = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
 
-      console.log(signin);
-    } catch (error) {
-      console.log(error);
-    }
-  };
   return (
     <>
-      <form onSubmit={logUserIn}>
+      <form>
         <div>
           <Input
             type="email"
+            id="email"
             value={email}
             onChange={(ev) => setEmail(ev.target.value)}
+            name="email"
           />
         </div>
         <div>
@@ -37,10 +26,12 @@ const LoginPage = () => {
             type="password"
             value={password}
             onChange={(ev) => setPassword(ev.target.value)}
+            name="password"
+            id="password"
           />
         </div>
         <div className="">
-          <Button>Login</Button>
+          <Button formAction={login}>Login</Button>
         </div>
       </form>
     </>

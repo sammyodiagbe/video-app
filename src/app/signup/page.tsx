@@ -1,32 +1,15 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { supabase } from "@/utils/supabase/client";
 import { FormEventHandler, useState } from "react";
 
 const SignupPage = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
-  const createUserAccount: FormEventHandler<HTMLFormElement> = async (
-    event
-  ) => {
-    event.preventDefault();
-    try {
-      const createAccount = await supabase.auth.signUp({
-        email,
-        password,
-      });
-
-      console.log(createAccount);
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
   return (
     <>
-      <form onSubmit={createUserAccount}>
+      <form>
         <div>
           <Input
             value={email}
