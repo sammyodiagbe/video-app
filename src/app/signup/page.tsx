@@ -6,7 +6,7 @@ import { useSignUp } from "@clerk/nextjs";
 import { FormEventHandler, useState } from "react";
 
 const SignupPage = () => {
-  const { isLoaded, signUp, setActive } = useSignUp();
+  const { signUp, isLoaded, setActive } = useSignUp();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -19,7 +19,7 @@ const SignupPage = () => {
     event
   ) => {
     event.preventDefault();
-    if (!isLoaded) {
+    if (!isLoaded || !signUp) {
       return;
     }
 
@@ -78,6 +78,7 @@ const SignupPage = () => {
                   type="email"
                   placeholder="Your email"
                   onChange={(event) => setEmail(event.target.value)}
+                  required
                 />
               </div>
               <div>
@@ -86,6 +87,7 @@ const SignupPage = () => {
                   type="password"
                   placeholder="Password"
                   onChange={(event) => setPassword(event.target.value)}
+                  required
                 />
               </div>
               <div>
