@@ -17,10 +17,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <ConvexClerkAuthProvider>
-      <html lang="en">
-        <body className={inter.className}>{children}</body>
-      </html>
-    </ConvexClerkAuthProvider>
+    <html lang="en">
+      <body className={inter.className}>
+        <ConvexClerkAuthProvider>{children}</ConvexClerkAuthProvider>
+      </body>
+    </html>
   );
 }

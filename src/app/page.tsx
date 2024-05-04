@@ -1,3 +1,21 @@
+import {
+  SignInButton,
+  UserButton,
+  SignedIn,
+  SignOutButton,
+  SignedOut,
+} from "@clerk/nextjs";
+
 export default function Home() {
-  return <></>;
+  return (
+    <>
+      <SignedIn>
+        <h1>You are currently authenticated</h1>
+        <SignOutButton />
+      </SignedIn>
+      <SignedOut>
+        <SignInButton />
+      </SignedOut>
+    </>
+  );
 }
