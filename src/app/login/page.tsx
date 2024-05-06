@@ -21,10 +21,14 @@ const LoginPage = () => {
 
     if (!isLoaded || !signIn) return;
     try {
-      const {} = await signIn.create({
+      const login = await signIn.create({
         identifier: email,
         password,
       });
+      console.log(login);
+      if (login.status === "complete") {
+        navigate.push("/home");
+      }
     } catch (error: any) {
       toast({
         description: error.errors[0].message,

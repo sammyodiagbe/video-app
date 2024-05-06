@@ -1,12 +1,13 @@
 "use client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/components/ui/use-toast";
 import VerificationComponent from "@/components/verificationUI";
 import { SignInButton, useSignUp } from "@clerk/nextjs";
 import { FormEventHandler, useState } from "react";
 
 const SignupPage = () => {
-  const { signUp, isLoaded, setActive } = useSignUp();
+  const { signUp, isLoaded } = useSignUp();
 
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
@@ -37,8 +38,10 @@ const SignupPage = () => {
           strategy: "email_code",
         });
       setPendingVerification(true);
-    } catch (error) {
-      console.log(error);
+    } catch (error: any) {
+      toast({
+        description: error.errors[0].message,
+      });
     }
   };
 
