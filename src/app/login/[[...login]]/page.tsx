@@ -3,18 +3,17 @@
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { FormEventHandler, useState } from "react";
-import { login } from "./action";
-import { useUser } from "@clerk/nextjs";
+import { login } from "../action";
 import { useRouter } from "next/navigation";
 import { useSignIn } from "@clerk/nextjs";
 import { toast } from "@/components/ui/use-toast";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
-  const user = useUser();
+  const router = useRouter();
   const [password, setPassword] = useState("");
   const navigate = useRouter();
-  const { signIn, isLoaded } = useSignIn();
+  const { signIn, isLoaded, setActive } = useSignIn();
   const [authenticated, setAuthenticated] = useState(false);
 
   const logUserIn: FormEventHandler<HTMLFormElement> = async (event) => {
@@ -26,11 +25,13 @@ const LoginPage = () => {
         identifier: email,
         password,
       });
+
       if (login.status === "complete") {
-        console.log("Attempting to reroute to the home page");
-        navigate.push("/");
+        await setActive({ session: login.createdSessionId });
+        router.push("/home");
       }
     } catch (error: any) {
+      console.log(error);
       toast({
         description: error.errors[0].message,
       });
