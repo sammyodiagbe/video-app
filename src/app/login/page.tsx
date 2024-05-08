@@ -15,6 +15,7 @@ const LoginPage = () => {
   const [password, setPassword] = useState("");
   const navigate = useRouter();
   const { signIn, isLoaded } = useSignIn();
+  const [authenticated, setAuthenticated] = useState(false);
 
   const logUserIn: FormEventHandler<HTMLFormElement> = async (event) => {
     event.preventDefault();
@@ -27,7 +28,8 @@ const LoginPage = () => {
       });
       console.log(login);
       if (login.status === "complete") {
-        navigate.push("/home");
+        console.log("Attempting to reroute to the home page");
+        navigate.push("/");
       }
     } catch (error: any) {
       toast({
@@ -38,13 +40,14 @@ const LoginPage = () => {
     // const login = await
   };
 
-  if (user) {
-    navigate.push("/home");
+  if (authenticated) {
+    return navigate.push("/home");
   }
 
   return (
     <div className="h-screen w-screen flex items-center justify-center">
       <div className="w-[400px]">
+        {authenticated ? <p>Authenticated</p> : null}
         <h1 className="text-2xl font-bold mb-5">Log into your account</h1>
         <form onSubmit={logUserIn} className="grid gap-[20px]">
           <div>
