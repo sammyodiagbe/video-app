@@ -1,15 +1,19 @@
 import { auth } from "@clerk/nextjs/server";
 import { Metadata } from "next";
-import { NextResponse } from "next/server";
+import { redirect } from "next/navigation";
+import { NextRequest } from "next/server";
 
 export const metadata: Metadata = {
   title: "login into your account",
 };
-const LoginRootLayout = ({ children }: { children: React.ReactNode }) => {
-  //   const { userId, sessionId } = auth();
-  //   if (sessionId && userId) {
-  //     NextResponse.redirect("/home");
-  //   }
+const LoginRootLayout = (
+  { children }: { children: React.ReactNode },
+  request: NextRequest
+) => {
+  const { userId } = auth();
+  if (userId) {
+    redirect("/home");
+  }
   return <>{children}</>;
 };
 
