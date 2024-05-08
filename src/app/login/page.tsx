@@ -26,7 +26,6 @@ const LoginPage = () => {
         identifier: email,
         password,
       });
-      console.log(login);
       if (login.status === "complete") {
         console.log("Attempting to reroute to the home page");
         navigate.push("/");
