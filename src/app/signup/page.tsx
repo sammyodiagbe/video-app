@@ -27,16 +27,16 @@ const SignupPage = () => {
 
     try {
       const signup = await signUp.create({
+        firstName: firstname,
+        lastName: lastname,
+        username,
         emailAddress: email,
         password: "ImagineDragons1@",
       });
 
-      console.log(signup);
-
-      const sendVerificationEmail =
-        await signUp.prepareEmailAddressVerification({
-          strategy: "email_code",
-        });
+      await signUp.prepareEmailAddressVerification({
+        strategy: "email_code",
+      });
       setPendingVerification(true);
     } catch (error: any) {
       toast({

@@ -1,11 +1,10 @@
-import { SignOutButton } from "@clerk/nextjs";
+import ChatScreenComponent from "@/components/chat-screen";
 
 const HomePage = async () => {
   return (
-    <>
-      <h1>Page should only be accessed by authenticated users,</h1>
-      <SignOutButton redirectUrl="/login" />
-    </>
+    <main className="h-screen w-screen bg-gray-300">
+      <ChatScreenComponent />
+    </main>
   );
 };
 

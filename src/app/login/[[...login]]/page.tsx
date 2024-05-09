@@ -7,6 +7,7 @@ import { login } from "../action";
 import { useRouter } from "next/navigation";
 import { useSignIn } from "@clerk/nextjs";
 import { toast } from "@/components/ui/use-toast";
+import Link from "next/link";
 
 const LoginPage = () => {
   const [email, setEmail] = useState("");
@@ -31,7 +32,6 @@ const LoginPage = () => {
         router.push("/home");
       }
     } catch (error: any) {
-      console.log(error);
       toast({
         description: error.errors[0].message,
       });
@@ -46,32 +46,37 @@ const LoginPage = () => {
 
   return (
     <div className="h-screen w-screen flex items-center justify-center">
-      <div className="w-[400px]">
-        {authenticated ? <p>Authenticated</p> : null}
-        <h1 className="text-2xl font-bold mb-5">Log into your account</h1>
-        <form onSubmit={logUserIn} className="grid gap-[20px]">
-          <div>
-            <Input
-              type="email"
-              id="email"
-              value={email}
-              onChange={(ev) => setEmail(ev.target.value)}
-              name="email"
-            />
-          </div>
-          <div>
-            <Input
-              type="password"
-              value={password}
-              onChange={(ev) => setPassword(ev.target.value)}
-              name="password"
-              id="password"
-            />
-          </div>
-          <div className="">
-            <Button formAction={login}>Login</Button>
-          </div>
-        </form>
+      <div>
+        <div className="w-[400px]">
+          {authenticated ? <p>Authenticated</p> : null}
+          <h1 className="text-2xl font-bold mb-5">Log into your account</h1>
+          <form onSubmit={logUserIn} className="grid gap-[20px]">
+            <div>
+              <Input
+                type="email"
+                id="email"
+                value={email}
+                onChange={(ev) => setEmail(ev.target.value)}
+                name="email"
+              />
+            </div>
+            <div>
+              <Input
+                type="password"
+                value={password}
+                onChange={(ev) => setPassword(ev.target.value)}
+                name="password"
+                id="password"
+              />
+            </div>
+            <div className="">
+              <Button formAction={login}>Login</Button>
+            </div>
+          </form>
+        </div>
+        <Link href={"/signup"} className="mt-8 text-center">
+          Don't have an account, signup.
+        </Link>
       </div>
     </div>
   );
