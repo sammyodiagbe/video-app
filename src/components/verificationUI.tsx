@@ -31,6 +31,7 @@ const VerificationComponent: React.FC<ComponentType> = ({ email }) => {
 
       if (activate.status === "complete") {
         await setActive({ session: activate.createdSessionId });
+
         const { id, firstName, lastName, username } = activate;
         await createUserData({
           userId: id!,

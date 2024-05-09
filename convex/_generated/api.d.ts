@@ -15,6 +15,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as authmutation from "../authmutation.js";
+import type * as userQuery from "../userQuery.js";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -26,6 +27,7 @@ import type * as authmutation from "../authmutation.js";
  */
 declare const fullApi: ApiFromModules<{
   authmutation: typeof authmutation;
+  userQuery: typeof userQuery;
 }>;
 export declare const api: FilterApi<
   typeof fullApi,
