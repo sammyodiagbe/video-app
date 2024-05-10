@@ -15,7 +15,6 @@ export const getMessages = query({
         .filter((e) => e.eq(e.field("conversationId"), conversationId))
         .collect();
 
-      console.log(messages);
       return messages;
     } catch (error: any) {
       console.log(error);
