@@ -7,6 +7,8 @@ import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useAction, useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
 import { useSearchParams } from "next/navigation";
+import { useUser } from "@clerk/nextjs";
+import ChatBubbleComponent from "./ui/chatBubble";
 type ChatScreenComponentType = {
   username: string;
   firstname: string;
@@ -22,6 +24,7 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   const conversation = useAction(api.queryActions.createNewConversation);
   const send = useAction(api.messageActions.sendMessage);
   const search = useSearchParams();
+  const { user, isLoaded } = useUser();
   const [conversationId, setConversationId] = useState("");
   const [message, setMessage] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement | null>(null);
@@ -58,6 +61,10 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
       });
     }
   }, [messages]);
+
+  if (!isLoaded && !user) {
+    return;
+  }
   return (
     <div className="flex flex-col h-full w-[600px] py-5">
       <div className="flex items-center justify-between">
@@ -81,13 +88,19 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
           </Button>
         </div>
       </div>
-      <div ref={conversationRef} className="flex-1 overflow-y-auto">
+      <div ref={conversationRef} className="flex-1 overflow-y-auto p-[30px]">
         {!messages?.length ? (
           <p>No message</p>
         ) : (
           messages.map((entry, index) => {
-            const { message } = entry;
-            return <p key={index}>{message}</p>;
+            const { message, sender } = entry;
+            const chat = { message, sender };
+            return (
+              <ChatBubbleComponent
+                chat={chat}
+                authUserUsername={user?.username!}
+              />
+            );
           })
         )}
       </div>
