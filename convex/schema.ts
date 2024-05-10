@@ -13,7 +13,7 @@ export default defineSchema({
     username: v.string(),
   }),
   messages: defineTable({
-    senderId: v.string(),
+    sender: v.string(),
     conversationId: v.string(),
     message: v.string(),
     seen: v.boolean(),

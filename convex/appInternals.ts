@@ -58,3 +58,22 @@ export const createNewConversation = internalMutation({
     }
   },
 });
+
+export const saveMessage = internalMutation({
+  args: { conversationId: v.string(), message: v.string() },
+  handler: async (ctx, args) => {
+    const { conversationId, message } = args;
+    const user = await ctx.auth.getUserIdentity();
+    try {
+      if (!user) throw new ConvexError("You are not authorized");
+      await ctx.db.insert("messages", {
+        message,
+        conversationId,
+        sender: user.nickname!,
+        seen: false,
+      });
+    } catch (error: any) {
+      console.log(error);
+    }
+  },
+});

@@ -14,7 +14,7 @@ export const createNewConversation = action({
       }
 
       const conversation: Doc<"conversations"> | null = await ctx.runQuery(
-        internal.conversationQuery.queryConversation,
+        internal.appInternals.queryConversation,
         { friend_username }
       );
 
@@ -23,7 +23,7 @@ export const createNewConversation = action({
       } else {
         console.log("Creating new conversation");
         const newConversation = await ctx.runMutation(
-          internal.conversationQuery.createNewConversation,
+          internal.appInternals.createNewConversation,
           { friend_username }
         );
         return newConversation;
