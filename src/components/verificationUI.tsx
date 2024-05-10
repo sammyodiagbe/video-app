@@ -29,6 +29,8 @@ const VerificationComponent: React.FC<ComponentType> = ({ email }) => {
     try {
       const activate = await signUp?.attemptEmailAddressVerification({ code });
 
+      console.log(activate);
+
       if (activate.status === "complete") {
         await setActive({ session: activate.createdSessionId });
 

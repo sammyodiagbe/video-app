@@ -11,9 +11,11 @@ export const getActiveUsers = query({
         throw new ConvexError("You are not authorized ");
       }
       // get all other users except the current user
+
+      console.log(user.nickname);
       const users = await ctx.db
         .query("users")
-        .filter((q) => q.neq(q.field("userId"), user.subject))
+        .filter((q) => q.neq(q.field("username"), user.nickname))
         .collect();
       return users;
     } catch (error: any) {

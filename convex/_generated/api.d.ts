@@ -15,6 +15,8 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as authmutation from "../authmutation.js";
+import type * as conversationQuery from "../conversationQuery.js";
+import type * as queryActions from "../queryActions.js";
 import type * as userQuery from "../userQuery.js";
 
 /**
@@ -27,6 +29,8 @@ import type * as userQuery from "../userQuery.js";
  */
 declare const fullApi: ApiFromModules<{
   authmutation: typeof authmutation;
+  conversationQuery: typeof conversationQuery;
+  queryActions: typeof queryActions;
   userQuery: typeof userQuery;
 }>;
 export declare const api: FilterApi<

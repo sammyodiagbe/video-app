@@ -1,17 +1,18 @@
 "use client";
 import { useQuery } from "convex/react";
 import { api } from "../../convex/_generated/api";
-import { useUser } from "@clerk/nextjs";
+import { SignOutButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 const SideBarComponent = () => {
-  const { isLoaded, user } = useUser();
+  const { isLoaded } = useUser();
 
   if (!isLoaded) return;
   const users = useQuery(api.userQuery.getActiveUsers, {});
-  console.log(users);
+
   return (
     <div className="p-[30px] bg-white">
+      <SignOutButton />
       <h1 className="">Active Users</h1>
       <div className="">
         {users?.map((user, index) => {
