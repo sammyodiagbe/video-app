@@ -17,12 +17,17 @@ export const createNewConversation = action({
         internal.conversationQuery.queryConversation,
         { friend_username }
       );
-      if (conversation) return conversation._id;
-      const newConversation = await ctx.runMutation(
-        internal.conversationQuery.createNewConversation,
-        { friend_username }
-      );
-      return newConversation;
+
+      if (conversation !== null) {
+        return conversation._id;
+      } else {
+        console.log("Creating new conversation");
+        const newConversation = await ctx.runMutation(
+          internal.conversationQuery.createNewConversation,
+          { friend_username }
+        );
+        return newConversation;
+      }
     } catch (error: any) {
       console.log(error);
     }

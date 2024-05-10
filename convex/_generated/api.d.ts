@@ -16,6 +16,7 @@ import type {
 } from "convex/server";
 import type * as authmutation from "../authmutation.js";
 import type * as conversationQuery from "../conversationQuery.js";
+import type * as messageQuery from "../messageQuery.js";
 import type * as queryActions from "../queryActions.js";
 import type * as userQuery from "../userQuery.js";
 
@@ -30,6 +31,7 @@ import type * as userQuery from "../userQuery.js";
 declare const fullApi: ApiFromModules<{
   authmutation: typeof authmutation;
   conversationQuery: typeof conversationQuery;
+  messageQuery: typeof messageQuery;
   queryActions: typeof queryActions;
   userQuery: typeof userQuery;
 }>;

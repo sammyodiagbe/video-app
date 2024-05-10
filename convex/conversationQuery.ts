@@ -16,15 +16,18 @@ export const queryConversation = internalQuery({
           q.or(
             q.and(
               q.eq(q.field("user1"), friend_username),
-              q.eq(q.field("user2"), user.subject!)
+              q.eq(q.field("user2"), user.nickname!)
             ),
             q.and(
-              q.eq(q.field("user1"), user.subject),
+              q.eq(q.field("user1"), user.nickname),
               q.eq(q.field("user2"), friend_username)
             )
           )
         )
         .first();
+
+      console.log("found conversation 11");
+      console.log(conversation);
 
       return conversation;
 

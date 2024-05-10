@@ -12,4 +12,10 @@ export default defineSchema({
     userId: v.string(),
     username: v.string(),
   }),
+  messages: defineTable({
+    senderId: v.string(),
+    conversationId: v.string(),
+    message: v.string(),
+    seen: v.boolean(),
+  }),
 });
