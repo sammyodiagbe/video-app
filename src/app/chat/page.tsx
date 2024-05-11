@@ -10,21 +10,21 @@ const ChatPage = () => {
   const firstname = router.get("firstname")!;
   const username = router.get("username")!;
   const friend_id = router.get("friend_id")!;
-  const [peerConnection, setPeerconnection] =
-    useState<RTCPeerConnection | null>();
+  let peerConnection: RTCPeerConnection | undefined;
+  let localStream: MediaStream | undefined;
+  let remoteStream: MediaStream | undefined;
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
-  const [localStream, setLocalStream] = useState<MediaStream | undefined>();
 
   const initializeCall = async () => {
-    const peerconnection = new RTCPeerConnection(stunServers);
-    const localStream = await navigator.mediaDevices.getUserMedia({
+    peerConnection = new RTCPeerConnection(stunServers);
+    localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
       audio: true,
     });
 
-    const remoteStream = new MediaStream();
+    remoteStream = new MediaStream();
     remoteVideoRef.current!.srcObject = remoteStream;
 
     if (localVideoRef === null) return;
@@ -32,11 +32,10 @@ const ChatPage = () => {
 
     // add all tracks to the peerconnection
     localStream.getTracks().forEach((track) => {
-      peerConnection?.addTrack(track, localStream);
+      peerConnection?.addTrack(track, localStream!);
     });
 
     peerConnection?.addEventListener("icecandidate", (event) => {
-      console.log("testing to see if this works");
       if (event.candidate) {
         console.log(event.candidate);
       }
@@ -44,20 +43,17 @@ const ChatPage = () => {
 
     peerConnection?.addEventListener("track", (event) => {
       event.streams[0].getTracks().forEach((track) => {
-        remoteStream.addTrack(track);
+        remoteStream!.addTrack(track);
       });
     });
 
     // so now we are gonna create an offer
-    const localOffer = await peerconnection.createOffer();
+    const localOffer = await peerConnection.createOffer();
 
-    console.log(localOffer);
     // set the localDescription for the connection
-    await peerconnection.setLocalDescription(localOffer);
+    await peerConnection.setLocalDescription(localOffer);
 
     // talk to the stun servers to give us our ice candidates
-
-    setLocalStream(localStream);
   };
 
   return (
