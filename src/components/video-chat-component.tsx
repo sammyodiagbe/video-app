@@ -1,42 +1,20 @@
-import { useState } from "react";
-import {
-  useLocalMicrophoneTrack,
-  useLocalCameraTrack,
-  LocalUser,
-  IMicrophoneAudioTrack,
-  ICameraVideoTrack,
-} from "agora-rtc-react";
+import { forwardRef, Ref } from "react";
 
 type VideoChatComponentType = {
-  conversationId: string;
-  localMicrophoneTrack: IMicrophoneAudioTrack;
-  localCameraTrack: ICameraVideoTrack;
-  cameraOn: boolean;
-  microphoneOn: boolean;
+  name: string;
 };
 
-const VideoChatComponent: React.FC<VideoChatComponentType> = ({
-  conversationId,
-  localCameraTrack,
-  localMicrophoneTrack,
-  cameraOn,
-  microphoneOn,
-}) => {
-  return (
-    <div className="bg-red-500 flex-1 h-full">
-      <h1>Video component</h1>
-      <div className="">
-        <LocalUser
-          audioTrack={localMicrophoneTrack}
-          videoTrack={localCameraTrack}
-          cameraOn={cameraOn}
-          micOn={microphoneOn}
-          playAudio={microphoneOn}
-          playVideo={cameraOn}
-        />
+const VideoChatComponent = forwardRef<HTMLVideoElement, VideoChatComponentType>(
+  ({ name }: VideoChatComponentType, ref) => {
+    return (
+      <div className="bg-red-500 flex-1 h-full">
+        <h1>Video component</h1>
+        <div className="">
+          <video ref={ref} className=" w-full h-auto" autoPlay muted />
+        </div>
       </div>
-    </div>
-  );
-};
+    );
+  }
+);
 
 export default VideoChatComponent;
