@@ -15,6 +15,7 @@ type ChatScreenComponentType = {
   lastname?: string;
   friend_id: string;
   initializeCall: Function;
+  conversationId: string;
 };
 
 const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
@@ -22,21 +23,12 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   friend_id,
   username,
   initializeCall,
+  conversationId,
 }) => {
-  const conversation = useAction(api.queryActions.createNewConversation);
   const send = useAction(api.messageActions.sendMessage);
-  const search = useSearchParams();
   const { user, isLoaded } = useUser();
-  const [conversationId, setConversationId] = useState("");
   const [message, setMessage] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement | null>(null);
-
-  const initializeConvo = useCallback(async () => {
-    const convoId = await conversation({
-      friend_username: search.get("username")!,
-    });
-    setConversationId(convoId!);
-  }, []);
 
   const messages = useQuery(
     api.messageQuery.getMessages,
@@ -48,12 +40,6 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
     await send({ conversationId, message });
     setMessage("");
   };
-  useEffect(() => {
-    return () => {
-      initializeConvo();
-      console.log("I should run once");
-    };
-  }, []);
 
   useEffect(() => {
     if (conversationId === null || conversationRef === null) return;

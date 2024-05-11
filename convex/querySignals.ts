@@ -2,9 +2,11 @@ import { ConvexError, v } from "convex/values";
 import { query } from "./_generated/server";
 
 export const querySignals = query({
-  args: { conversationoId: v.string(), username: v.string() },
+  args: { conversationId: v.string(), username: v.string() },
   handler: async (ctx, args) => {
-    const { conversationoId, username } = args;
+    const { conversationId, username } = args;
+
+    console.log(conversationId, "   ", username);
     const user = await ctx.auth.getUserIdentity();
     try {
       if (!user) throw new ConvexError("You are not authorized");
@@ -12,11 +14,14 @@ export const querySignals = query({
         .query("signals")
         .filter((q) =>
           q.and(
-            q.eq(q.field("reciever"), username),
-            q.eq(q.field("conversationId"), conversationoId),
-            q.eq(q.field("sender"), user.nickname)
+            q.eq(q.field("reciever"), user.nickname),
+            q.eq(q.field("conversationId"), conversationId)
           )
-        );
+        )
+        .collect();
+
+      console.log("==============");
+      console.log(signals);
       return signals;
     } catch (error: any) {
       console.log(error);

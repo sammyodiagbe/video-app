@@ -2,7 +2,7 @@ import { ConvexError, v } from "convex/values";
 import { action } from "./_generated/server";
 import { internal } from "./_generated/api";
 
-const sendSignal = action({
+export const sendSignal = action({
   args: {
     conversationId: v.string(),
     reciever: v.string(),
@@ -17,13 +17,16 @@ const sendSignal = action({
         throw new ConvexError("You are not authorized");
       }
       // create a signal type of data
-      const saveSignal = ctx.runMutation(internal.appInternals.createSignal, {
-        conversationId,
-        reciever,
-        type,
-        data,
-        sender: user.nickname!,
-      });
+      const saveSignal = await ctx.runMutation(
+        internal.appInternals.createSignal,
+        {
+          conversationId,
+          reciever,
+          type,
+          data,
+          sender: user.nickname!,
+        }
+      );
     } catch (error: any) {
       console.log(error);
     }
