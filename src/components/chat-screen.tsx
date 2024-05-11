@@ -16,9 +16,6 @@ type ChatScreenComponentType = {
   friend_id: string;
 };
 
-import { StreamVideoClient, User } from "@stream-io/video-react-sdk";
-import VideoChatComponent from "./video-chat-component";
-
 const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   firstname,
   friend_id,
@@ -31,7 +28,6 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   const [conversationId, setConversationId] = useState("");
   const [message, setMessage] = useState<string>("");
   const conversationRef = useRef<HTMLDivElement | null>(null);
-  const tempUser: User = { id: user?.id } as User;
 
   const initializeConvo = useCallback(async () => {
     const convoId = await conversation({
@@ -71,7 +67,6 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   }
   return (
     <>
-      <VideoChatComponent userId={user?.id!} conversationId={conversationId} />
       <div className="flex flex-col h-full w-[600px] py-5">
         <div className="flex items-center justify-between">
           <div className="flex items-center">
