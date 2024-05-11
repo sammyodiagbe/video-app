@@ -77,3 +77,31 @@ export const saveMessage = internalMutation({
     }
   },
 });
+
+export const createSignal = internalMutation({
+  args: {
+    conversationId: v.string(),
+    sender: v.string(),
+    reciever: v.string(),
+    data: v.string(),
+    type: v.string(),
+  },
+  handler: async (ctx, args) => {
+    const { conversationId, sender, reciever, data, type } = args;
+    await ctx.db.insert("signals", {
+      conversationId,
+      sender,
+      reciever,
+      data,
+      type,
+    });
+  },
+});
+
+export const deleteSignal = internalMutation({
+  args: { signalId: v.id("signals") },
+  handler: async (ctx, args) => {
+    const { signalId } = args;
+    await ctx.db.delete(signalId);
+  },
+});

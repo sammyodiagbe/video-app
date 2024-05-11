@@ -18,4 +18,11 @@ export default defineSchema({
     message: v.string(),
     seen: v.boolean(),
   }),
+  signals: defineTable({
+    type: v.string(),
+    data: v.string(),
+    conversationId: v.string(),
+    reciever: v.string(),
+    sender: v.string(),
+  }),
 });
