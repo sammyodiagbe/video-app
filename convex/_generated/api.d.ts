@@ -19,6 +19,7 @@ import type * as authmutation from "../authmutation.js";
 import type * as messageActions from "../messageActions.js";
 import type * as messageQuery from "../messageQuery.js";
 import type * as queryActions from "../queryActions.js";
+import type * as querySignals from "../querySignals.js";
 import type * as signalAction from "../signalAction.js";
 import type * as userQuery from "../userQuery.js";
 
@@ -36,6 +37,7 @@ declare const fullApi: ApiFromModules<{
   messageActions: typeof messageActions;
   messageQuery: typeof messageQuery;
   queryActions: typeof queryActions;
+  querySignals: typeof querySignals;
   signalAction: typeof signalAction;
   userQuery: typeof userQuery;
 }>;
