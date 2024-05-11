@@ -14,12 +14,14 @@ type ChatScreenComponentType = {
   firstname: string;
   lastname?: string;
   friend_id: string;
+  initializeCall: Function;
 };
 
 const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   firstname,
   friend_id,
   username,
+  initializeCall,
 }) => {
   const conversation = useAction(api.queryActions.createNewConversation);
   const send = useAction(api.messageActions.sendMessage);
@@ -68,7 +70,7 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   return (
     <>
       <div className="flex flex-col h-full w-[600px] py-5">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between px-[30px] ">
           <div className="flex items-center">
             <div className="h-[50px] w-[50px] flex justify-center items-center font-bold bg-slate-600 text-white rounded-full">
               {firstname[0].toUpperCase()}
@@ -84,7 +86,7 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
             <Button variant={"link"}>
               <Phone />
             </Button>
-            <Button variant={"link"}>
+            <Button variant={"link"} onClick={() => initializeCall()}>
               <Video />
             </Button>
           </div>
