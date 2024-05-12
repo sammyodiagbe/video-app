@@ -31,17 +31,21 @@ const VideoChatComponent: FC<VideoChatComponentType> = ({
           playsInline
         />
       </div>
-      <div className="w-[250px] absolute bg-transparent py-[15px] px-[30px] bottom-[10px] left-[50%] bg-gray-200 translate-x-[-50%] rounded-full flex justify-between items-center">
+      <div className="w-[250px] absolute bg-transparent py-[15px] px-[30px] bottom-[20px] left-[50%] bg-gray-200 translate-x-[-50%] rounded-full flex justify-between items-center bg-opacity-5">
         <button
-          className={"h-[45px] w-[45px] flex items-center justify-center"}
+          className={
+            "h-[45px] w-[45px] flex items-center text-white justify-center"
+          }
         >
           <Video size={25} />
         </button>
-        <button className="bg-red-500 text-white rounded-full h-[50px] w-[50px] hover:bg-red-700 flex items-center justify-center">
+        <button className="bg-blue-500 text-white rounded-full h-[50px] w-[50px] hover:bg-blue-700 flex items-center justify-center">
           <Phone size={24} />
         </button>
         <button
-          className={"h-[45px] w-[45px] flex items-center justify-center"}
+          className={
+            "h-[45px] w-[45px] flex items-center text-white justify-center"
+          }
         >
           <Mic size={25} />
         </button>
