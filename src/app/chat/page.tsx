@@ -52,7 +52,10 @@ const ChatPage = () => {
   useEffect(() => {
     initializeCall();
 
-    return () => {};
+    return () => {
+      peerConnection?.close();
+      setPeerConnection(null);
+    };
   }, [conversationId]);
 
   useEffect(() => {
