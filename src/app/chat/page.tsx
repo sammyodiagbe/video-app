@@ -91,41 +91,46 @@ const ChatPage = () => {
   };
   const initializeCall = async () => {
     if (!conversationId) return;
-    const pc = new RTCPeerConnection(stunServers);
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: true,
-      audio: false,
-    });
 
-    remoteStream = new MediaStream();
+    try {
+      const pc = new RTCPeerConnection(stunServers);
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: false,
+      });
 
-    remoteVideoRef.current!.srcObject = remoteStream;
-    localVideoRef.current!.srcObject = localStream;
+      remoteStream = new MediaStream();
 
-    // add all tracks to the peerconnection
-    localStream.getTracks().forEach((track) => {
-      pc.addTrack(track, localStream!);
-    });
+      remoteVideoRef.current!.srcObject = remoteStream;
+      localVideoRef.current!.srcObject = localStream;
 
-    pc.addEventListener("icecandidate", (event) => {
-      if (event.candidate) {
-        const encode = encodeJson(event.candidate);
-        signal("candidate", conversationId!, username, encode);
-      }
-    });
+      // add all tracks to the peerconnection
+      localStream.getTracks().forEach((track) => {
+        pc.addTrack(track, localStream!);
+      });
 
-    pc.addEventListener("track", (event) => {
-      try {
-        event.streams[0].getTracks().forEach((track) => {
-          console.log(track);
-          remoteStream!.addTrack(track);
-        });
-      } catch (error: any) {
-        console.log(error);
-      }
-    });
+      pc.addEventListener("icecandidate", (event) => {
+        if (event.candidate) {
+          const encode = encodeJson(event.candidate);
+          signal("candidate", conversationId!, username, encode);
+        }
+      });
 
-    setPeerConnection(pc);
+      pc.addEventListener("track", (event) => {
+        try {
+          event.streams[0].getTracks().forEach((track) => {
+            console.log(track);
+            remoteStream!.addTrack(track);
+          });
+        } catch (error: any) {
+          console.log(error);
+        }
+      });
+
+      setPeerConnection(pc);
+    } catch (error: any) {
+      console.log(error);
+    }
 
     // so now we are gonna create an offer
     // talk to the stun servers to give us our ice candidates
