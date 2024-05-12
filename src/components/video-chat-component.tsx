@@ -12,9 +12,8 @@ const VideoChatComponent: FC<VideoChatComponentType> = ({
   remoteVideoRef,
 }) => {
   return (
-    <div className="bg-red-500 flex-1 h-full">
-      <h1>Video component</h1>
-      <div className="">
+    <div className="relative flex-1 h-full max-h-full overflow-hidden">
+      <div className="absolute w-[180px] h-[200px] r-[20px] t-[20px]">
         <video
           ref={localVideoRef}
           className=" w-full h-auto"
@@ -22,10 +21,10 @@ const VideoChatComponent: FC<VideoChatComponentType> = ({
           playsInline
         />
       </div>
-      <div className="bg-blue-500">
+      <div className="">
         <video
           ref={remoteVideoRef}
-          className="w-full h-auto"
+          className="w-full h-auto max-h-full"
           autoPlay
           playsInline
         />

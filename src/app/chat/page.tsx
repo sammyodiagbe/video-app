@@ -22,7 +22,7 @@ const ChatPage = () => {
   let [initialized, setInitialized] = useState(false);
   let localStream: MediaStream | undefined;
   let remoteStream: MediaStream | undefined;
-  const [conversationId, setConversationId] = useState("");
+  const [conversationId, setConversationId] = useState<string>();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const signals = useQuery(
@@ -40,19 +40,20 @@ const ChatPage = () => {
       friend_username: router.get("username")!,
     });
     setConversationId(convoId!);
+    initializeCall();
   }, []);
 
   useEffect(() => {
-    initializeCall();
+    initializeConvo();
+
     return () => {};
   }, []);
 
   useEffect(() => {
-    return () => {
-      initializeConvo();
-      console.log("I should run once");
-    };
-  }, []);
+    initializeCall();
+
+    return () => {};
+  }, [conversationId]);
 
   useEffect(() => {
     handleConnection(signals!);
@@ -89,6 +90,7 @@ const ChatPage = () => {
     }
   };
   const initializeCall = async () => {
+    if (!conversationId) return;
     const pc = new RTCPeerConnection(stunServers);
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
@@ -96,9 +98,8 @@ const ChatPage = () => {
     });
 
     remoteStream = new MediaStream();
-    remoteVideoRef.current!.srcObject = remoteStream;
 
-    if (localVideoRef === null) return;
+    remoteVideoRef.current!.srcObject = remoteStream;
     localVideoRef.current!.srcObject = localStream;
 
     // add all tracks to the peerconnection
@@ -109,18 +110,23 @@ const ChatPage = () => {
     pc.addEventListener("icecandidate", (event) => {
       if (event.candidate) {
         const encode = encodeJson(event.candidate);
-        signal("candidate", conversationId, username, encode);
+        signal("candidate", conversationId!, username, encode);
       }
     });
 
     pc.addEventListener("track", (event) => {
-      console.log(event);
-      event.streams[0].getTracks().forEach((track) => {
-        remoteStream!.addTrack(track);
-      });
+      try {
+        event.streams[0].getTracks().forEach((track) => {
+          console.log(track);
+          remoteStream!.addTrack(track);
+        });
+      } catch (error: any) {
+        console.log(error);
+      }
     });
 
     setPeerConnection(pc);
+
     // so now we are gonna create an offer
     // talk to the stun servers to give us our ice candidates
   };
@@ -130,21 +136,27 @@ const ChatPage = () => {
     const jsonencode = encodeJson(localOffer);
     // set the localDescription for the connection
     await peerConnection?.setLocalDescription(localOffer);
-    signal("offer", conversationId, username, jsonencode);
+    signal("offer", conversationId!, username, jsonencode);
   };
 
   const createAnswer = async (data: string) => {
-    const decoded = decodeJson(data);
+    const decoded: any = decodeJson(data);
 
     await peerConnection?.setRemoteDescription(decoded);
     const answer = await peerConnection?.createAnswer();
     await peerConnection?.setLocalDescription(answer);
     const codedAnswer = encodeJson(answer);
-    signal("answer", conversationId, username, codedAnswer);
+    signal("answer", conversationId!, username, codedAnswer);
   };
 
   const addIceCandidate = async (decoded: any) => {
-    await peerConnection?.addIceCandidate(decoded.candidate);
+    console.log(decoded);
+    try {
+      const iceCandidate = new RTCIceCandidate(decoded);
+      await peerConnection?.addIceCandidate(iceCandidate);
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   const connectConnections = async (data: string) => {
@@ -154,6 +166,10 @@ const ChatPage = () => {
     if (!peerConnection?.currentRemoteDescription) {
       await peerConnection?.setRemoteDescription(json);
     }
+
+    console.log(peerConnection?.currentLocalDescription);
+    console.log(peerConnection?.currentRemoteDescription);
+    console.log(peerConnection?.signalingState);
   };
 
   // used to send signals
@@ -165,6 +181,8 @@ const ChatPage = () => {
   ) => {
     sendSignal({ type, conversationId, reciever, data });
   };
+
+  if (!conversationId) return <h1>Hold your horses</h1>;
 
   return (
     <main className=" h-screen w-screen flex  items-center">
