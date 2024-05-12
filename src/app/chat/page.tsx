@@ -7,16 +7,19 @@ import { stunServers } from "@/utils/stunServers";
 import { useAction, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { SignalType } from "@/utils/types";
+import { decodeJson, encodeJson } from "@/utils/utils";
 
 const ChatPage = () => {
   const router = useSearchParams();
   const sendSignal = useAction(api.signalAction.sendSignal);
   const initConversation = useAction(api.queryActions.createNewConversation);
-
+  const [inACall, setInACall] = useState(false);
   const firstname = router.get("firstname")!;
   const username = router.get("username")!;
   const friend_id = router.get("friend_id")!;
-  let peerConnection: RTCPeerConnection | undefined;
+  let [peerConnection, setPeerConnection] =
+    useState<RTCPeerConnection | null>();
+  let [initialized, setInitialized] = useState(false);
   let localStream: MediaStream | undefined;
   let remoteStream: MediaStream | undefined;
   const [conversationId, setConversationId] = useState("");
@@ -40,6 +43,11 @@ const ChatPage = () => {
   }, []);
 
   useEffect(() => {
+    initializeCall();
+    return () => {};
+  }, []);
+
+  useEffect(() => {
     return () => {
       initializeConvo();
       console.log("I should run once");
@@ -51,35 +59,40 @@ const ChatPage = () => {
     return () => {};
   }, [signals]);
 
-  const handleConnection = (signals: SignalType[]) => {
-    if (!peerConnection) {
-      peerConnection = new RTCPeerConnection(stunServers);
-    }
-    signals.forEach((signal) => {
-      const { type, data } = signal;
-      const decodejson = JSON.parse(data);
-      switch (type) {
-        case "offer":
-          // setup and answer from the user
-          console.log("offer has been recieved");
-          console.log(decodejson);
-          break;
-        case "candidate":
-          // set up the candidate
-          break;
-        case "answer":
-          // so we are gonna connect the two users;
-          break;
-        default:
-          break;
+  const handleConnection = async (signals: SignalType[]) => {
+    if (inACall) return;
+    if (signals.length) {
+      let temp = [...signals];
+      if (!peerConnection) {
+        initializeCall();
       }
-    });
+      temp.forEach((signal) => {
+        const { type, data } = signal;
+        switch (type) {
+          case "offer":
+            // setup and answer from the user
+            createAnswer(data);
+            break;
+          case "candidate":
+            // set up the candidate
+            const decoded = decodeJson(data);
+            addIceCandidate(decoded);
+            break;
+          case "answer":
+            // so we are gonna connect the two users;
+            connectConnections(data);
+            break;
+          default:
+            break;
+        }
+      });
+    }
   };
   const initializeCall = async () => {
-    peerConnection = new RTCPeerConnection(stunServers);
+    const pc = new RTCPeerConnection(stunServers);
     localStream = await navigator.mediaDevices.getUserMedia({
       video: true,
-      audio: true,
+      audio: false,
     });
 
     remoteStream = new MediaStream();
@@ -90,54 +103,83 @@ const ChatPage = () => {
 
     // add all tracks to the peerconnection
     localStream.getTracks().forEach((track) => {
-      peerConnection?.addTrack(track, localStream!);
+      pc.addTrack(track, localStream!);
     });
 
-    peerConnection?.addEventListener("icecandidate", (event) => {
+    pc.addEventListener("icecandidate", (event) => {
       if (event.candidate) {
-        const encode = JSON.stringify(event.candidate);
-        sendSignal({
-          type: "candidate",
-          conversationId: conversationId,
-          reciever: username,
-          data: encode,
-        });
+        const encode = encodeJson(event.candidate);
+        signal("candidate", conversationId, username, encode);
       }
     });
 
-    peerConnection?.addEventListener("track", (event) => {
+    pc.addEventListener("track", (event) => {
+      console.log(event);
       event.streams[0].getTracks().forEach((track) => {
         remoteStream!.addTrack(track);
       });
     });
 
+    setPeerConnection(pc);
     // so now we are gonna create an offer
-    const localOffer = await peerConnection.createOffer();
-    const jsonencode = JSON.stringify(localOffer);
-    // set the localDescription for the connection
-    await peerConnection.setLocalDescription(localOffer);
-    sendSignal({
-      type: "offer",
-      conversationId: conversationId,
-      reciever: username,
-      data: jsonencode,
-    });
     // talk to the stun servers to give us our ice candidates
+  };
+
+  const initializeAndCreateOffer = async () => {
+    const localOffer = await peerConnection?.createOffer();
+    const jsonencode = encodeJson(localOffer);
+    // set the localDescription for the connection
+    await peerConnection?.setLocalDescription(localOffer);
+    signal("offer", conversationId, username, jsonencode);
+  };
+
+  const createAnswer = async (data: string) => {
+    const decoded = decodeJson(data);
+
+    await peerConnection?.setRemoteDescription(decoded);
+    const answer = await peerConnection?.createAnswer();
+    await peerConnection?.setLocalDescription(answer);
+    const codedAnswer = encodeJson(answer);
+    signal("answer", conversationId, username, codedAnswer);
+  };
+
+  const addIceCandidate = async (decoded: any) => {
+    await peerConnection?.addIceCandidate(decoded.candidate);
+  };
+
+  const connectConnections = async (data: string) => {
+    const json = decodeJson(data);
+
+    // remoteVideoRef.current?.srcObject = remoteStream!;
+    if (!peerConnection?.currentRemoteDescription) {
+      await peerConnection?.setRemoteDescription(json);
+    }
+  };
+
+  // used to send signals
+  const signal = (
+    type: string,
+    conversationId: string,
+    reciever: string,
+    data: string
+  ) => {
+    sendSignal({ type, conversationId, reciever, data });
   };
 
   return (
     <main className=" h-screen w-screen flex  items-center">
-      <VideoChatComponent name="" ref={localVideoRef} />
+      <VideoChatComponent
+        name=""
+        localVideoRef={localVideoRef}
+        remoteVideoRef={remoteVideoRef}
+      />
       <ChatScreenComponent
         firstname={firstname}
         username={username}
         friend_id={friend_id}
-        initializeCall={initializeCall}
+        initializeCall={initializeAndCreateOffer}
         conversationId={conversationId}
       />
-      <div className="w-[300px]">
-        <video ref={remoteVideoRef} className="w-full h-auto" autoPlay muted />
-      </div>
     </main>
   );
 };

@@ -20,8 +20,6 @@ export const querySignals = query({
         )
         .collect();
 
-      console.log("==============");
-      console.log(signals);
       return signals;
     } catch (error: any) {
       console.log(error);
