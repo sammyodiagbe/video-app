@@ -64,7 +64,7 @@ const ChatPage = () => {
   }, [signals]);
 
   const handleConnection = async (signals: SignalType[]) => {
-    if (inACall) return;
+    if (inACall || !signals) return;
     if (signals.length) {
       let temp = [...signals];
       if (!peerConnection) {
@@ -149,12 +149,15 @@ const ChatPage = () => {
 
   const createAnswer = async (data: string) => {
     const decoded: any = decodeJson(data);
-
-    await peerConnection?.setRemoteDescription(decoded);
-    const answer = await peerConnection?.createAnswer();
-    await peerConnection?.setLocalDescription(answer);
-    const codedAnswer = encodeJson(answer);
-    signal("answer", conversationId!, username, codedAnswer);
+    try {
+      await peerConnection?.setRemoteDescription(decoded);
+      const answer = await peerConnection?.createAnswer();
+      await peerConnection?.setLocalDescription(answer);
+      const codedAnswer = encodeJson(answer);
+      signal("answer", conversationId!, username, codedAnswer);
+    } catch (error: any) {
+      console.log(error);
+    }
   };
 
   const addIceCandidate = async (decoded: any) => {
@@ -169,15 +172,14 @@ const ChatPage = () => {
 
   const connectConnections = async (data: string) => {
     const json = decodeJson(data);
-
-    // remoteVideoRef.current?.srcObject = remoteStream!;
-    if (!peerConnection?.currentRemoteDescription) {
-      await peerConnection?.setRemoteDescription(json);
+    try {
+      if (!peerConnection?.currentRemoteDescription) {
+        await peerConnection?.setRemoteDescription(json);
+      }
+    } catch (error: any) {
+      console.log(error);
     }
-
-    console.log(peerConnection?.currentLocalDescription);
-    console.log(peerConnection?.currentRemoteDescription);
-    console.log(peerConnection?.signalingState);
+    // remoteVideoRef.current?.srcObject = remoteStream!;
   };
 
   // used to send signals

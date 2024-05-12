@@ -87,6 +87,7 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
               return (
                 <ChatBubbleComponent
                   chat={chat}
+                  key={index}
                   authUserUsername={user?.username!}
                 />
               );
