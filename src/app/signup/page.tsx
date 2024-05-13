@@ -31,7 +31,7 @@ const SignupPage = () => {
         lastName: lastname,
         username,
         emailAddress: email,
-        password: "ImagineDragons1@",
+        password: password,
       });
 
       await signUp.prepareEmailAddressVerification({
