@@ -5,8 +5,6 @@ export const querySignals = query({
   args: { conversationId: v.string(), username: v.string() },
   handler: async (ctx, args) => {
     const { conversationId, username } = args;
-
-    console.log(conversationId, "   ", username);
     const user = await ctx.auth.getUserIdentity();
     try {
       if (!user) throw new ConvexError("You are not authorized");

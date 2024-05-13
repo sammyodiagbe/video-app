@@ -27,8 +27,8 @@ export const sendSignal = action({
           sender: user.nickname!,
         }
       );
-      await ctx.scheduler.runAfter(500, internal.appInternals.deleteSignal, {
-        signalId: saveSignal!,
+      await ctx.scheduler.runAfter(1500, internal.appInternals.deleteSignal, {
+        signalId: saveSignal,
       });
     } catch (error: any) {
       console.log(error);
@@ -41,6 +41,7 @@ export const deleteSignal = action({
   handler: async (ctx, args) => {
     const { signalId } = args;
     const user = await ctx.auth.getUserIdentity();
+    console.log("deleting signal 1");
     await ctx.runMutation(internal.appInternals.deleteSignal, { signalId });
     try {
       if (!user) throw new ConvexError("you are not authorized");

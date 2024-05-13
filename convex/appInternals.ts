@@ -88,13 +88,14 @@ export const createSignal = internalMutation({
   },
   handler: async (ctx, args) => {
     const { conversationId, sender, reciever, data, type } = args;
-    await ctx.db.insert("signals", {
+    const signal = await ctx.db.insert("signals", {
       conversationId,
       sender,
       reciever,
       data,
       type,
     });
+    return signal;
   },
 });
 

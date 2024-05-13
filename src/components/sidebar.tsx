@@ -5,13 +5,14 @@ import { SignOutButton, useUser } from "@clerk/nextjs";
 import Link from "next/link";
 
 const SideBarComponent = () => {
-  const { isLoaded } = useUser();
+  const { isLoaded, user } = useUser();
 
   if (!isLoaded) return;
   const users = useQuery(api.userQuery.getActiveUsers, {});
 
   return (
     <div className="p-[30px] bg-white">
+      {user && <p>You are signed in as {user.username}</p>}
       <SignOutButton />
       <h1 className="">Active Users</h1>
       <div className="">
