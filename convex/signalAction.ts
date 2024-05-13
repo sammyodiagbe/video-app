@@ -27,7 +27,7 @@ export const sendSignal = action({
           sender: user.nickname!,
         }
       );
-      await ctx.scheduler.runAfter(1500, internal.appInternals.deleteSignal, {
+      await ctx.scheduler.runAfter(10000, internal.appInternals.deleteSignal, {
         signalId: saveSignal,
       });
     } catch (error: any) {
