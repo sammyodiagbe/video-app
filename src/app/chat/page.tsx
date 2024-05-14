@@ -27,6 +27,7 @@ const ChatPage = () => {
   const [conversationId, setConversationId] = useState<string>();
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const [remoteAnswer, setRemoteAnswer] = useState<string | null>(null);
   const signals = useQuery(
     api.querySignals.querySignals,
     conversationId
@@ -78,8 +79,8 @@ const ChatPage = () => {
           case "offer":
             // this is where the call comes in
             // setup and answer from the user
-            createAnswer(data);
             setIncomingCall(true);
+            setRemoteAnswer(data);
             break;
           case "candidate":
             // set up the candidate
@@ -99,10 +100,15 @@ const ChatPage = () => {
 
   const endCall = () => {
     setIncomingCall(false);
+    setRemoteAnswer(null);
   };
 
   const answerCall = () => {
     setIncomingCall(false);
+    if (remoteAnswer) {
+      createAnswer(remoteAnswer);
+      setRemoteAnswer(null);
+    }
   };
   const initializeCall = async () => {
     if (!conversationId) return;
