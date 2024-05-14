@@ -8,6 +8,7 @@ import { useAction, useQuery } from "convex/react";
 import { api } from "../../../convex/_generated/api";
 import { SignalType } from "@/utils/types";
 import { decodeJson, encodeJson } from "@/utils/utils";
+import PhoneRingingComponent from "@/components/phone_ringing";
 
 const ChatPage = () => {
   const router = useSearchParams();
@@ -17,6 +18,7 @@ const ChatPage = () => {
   const firstname = router.get("firstname")!;
   const username = router.get("username")!;
   const friend_id = router.get("friend_id")!;
+  const [incomingCall, setIncomingCall] = useState(false);
   let [peerConnection, setPeerConnection] =
     useState<RTCPeerConnection | null>();
   let [initialized, setInitialized] = useState(false);
@@ -74,8 +76,10 @@ const ChatPage = () => {
         const { type, data } = signal;
         switch (type) {
           case "offer":
+            // this is where the call comes in
             // setup and answer from the user
             createAnswer(data);
+            setIncomingCall(true);
             break;
           case "candidate":
             // set up the candidate
@@ -91,6 +95,14 @@ const ChatPage = () => {
         }
       });
     }
+  };
+
+  const endCall = () => {
+    setIncomingCall(false);
+  };
+
+  const answerCall = () => {
+    setIncomingCall(false);
   };
   const initializeCall = async () => {
     if (!conversationId) return;
@@ -196,6 +208,9 @@ const ChatPage = () => {
 
   return (
     <main className=" h-screen w-screen flex  items-center">
+      {incomingCall && (
+        <PhoneRingingComponent endCall={endCall} answerCall={answerCall} />
+      )}
       <VideoChatComponent
         name=""
         localVideoRef={localVideoRef}
