@@ -9,6 +9,7 @@ import { api } from "../../../convex/_generated/api";
 import { SignalType } from "@/utils/types";
 import { decodeJson, encodeJson } from "@/utils/utils";
 import PhoneRingingComponent from "@/components/phone_ringing";
+import { toast } from "@/components/ui/use-toast";
 
 const ChatPage = () => {
   const router = useSearchParams();
@@ -22,6 +23,7 @@ const ChatPage = () => {
   let [peerConnection, setPeerConnection] =
     useState<RTCPeerConnection | null>();
   let [initialized, setInitialized] = useState(false);
+  const [calling, setCalling] = useState(false);
   let localStream: MediaStream | undefined;
   let remoteStream: MediaStream | undefined;
   const [conversationId, setConversationId] = useState<string>();
@@ -91,6 +93,14 @@ const ChatPage = () => {
             // so we are gonna connect the two users;
             connectConnections(data);
             break;
+
+          case "call_rejected":
+            setInitialized(false);
+            setCalling(false);
+            toast({
+              description: "Call rejected",
+            });
+            break;
           default:
             break;
         }
@@ -98,13 +108,17 @@ const ChatPage = () => {
     }
   };
 
-  const endCall = () => {
+  const rejectCall = () => {
     setIncomingCall(false);
     setRemoteAnswer(null);
+    setCalling(false);
+    signal("call_rejected", conversationId!, username, "");
   };
 
   const answerCall = () => {
     setIncomingCall(false);
+    setCalling(false);
+    setInitialized(true);
     if (remoteAnswer) {
       createAnswer(remoteAnswer);
       setRemoteAnswer(null);
@@ -160,6 +174,7 @@ const ChatPage = () => {
   const initializeAndCreateOffer = async () => {
     const localOffer = await peerConnection?.createOffer();
     const jsonencode = encodeJson(localOffer);
+    setCalling(true);
     // set the localDescription for the connection
     await peerConnection?.setLocalDescription(localOffer);
     signal("offer", conversationId!, username, jsonencode);
@@ -215,7 +230,10 @@ const ChatPage = () => {
   return (
     <main className=" h-screen w-screen flex  items-center">
       {incomingCall && (
-        <PhoneRingingComponent endCall={endCall} answerCall={answerCall} />
+        <PhoneRingingComponent
+          rejectCall={rejectCall}
+          answerCall={answerCall}
+        />
       )}
       <VideoChatComponent
         name=""
@@ -225,6 +243,8 @@ const ChatPage = () => {
       <ChatScreenComponent
         firstname={firstname}
         username={username}
+        calling={calling}
+        initialized={initialized}
         friend_id={friend_id}
         initializeCall={initializeAndCreateOffer}
         conversationId={conversationId}

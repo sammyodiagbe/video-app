@@ -16,6 +16,8 @@ type ChatScreenComponentType = {
   friend_id: string;
   initializeCall: Function;
   conversationId: string;
+  calling: boolean;
+  initialized: boolean;
 };
 
 const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
@@ -24,6 +26,8 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   username,
   initializeCall,
   conversationId,
+  calling,
+  initialized,
 }) => {
   const send = useAction(api.messageActions.sendMessage);
   const { user, isLoaded } = useUser();
@@ -69,10 +73,14 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
           </div>
 
           <div className="videos">
-            <Button variant={"link"}>
+            <Button variant={"link"} disabled={calling || initialized}>
               <Phone />
             </Button>
-            <Button variant={"link"} onClick={() => initializeCall()}>
+            <Button
+              variant={"link"}
+              disabled={calling || initialized}
+              onClick={() => initializeCall()}
+            >
               <Video />
             </Button>
           </div>

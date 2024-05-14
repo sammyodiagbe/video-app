@@ -3,12 +3,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import React from "react";
 
 type PhoneComponentType = {
-  endCall: Function;
+  rejectCall: Function;
   answerCall: Function;
 };
 
 const PhoneRingingComponent: React.FC<PhoneComponentType> = ({
-  endCall,
+  rejectCall,
   answerCall,
 }) => {
   return (
@@ -19,7 +19,12 @@ const PhoneRingingComponent: React.FC<PhoneComponentType> = ({
         exit={{ y: -500 }}
         className="absolute top-[20px] w-[380px] shadow-lg right-[10px] flex items-center justify-between  p-[20px] rounded-md bg-blue-600"
       >
-        <audio src="/sounds/ring_effect.mp3" autoPlay={true} loop />
+        <audio
+          src="/sounds/ring_effect.mp3"
+          autoPlay={true}
+          loop
+          muted={false}
+        />
         <div className="flex items-center">
           <Phone size={15} className="text-white" />
           <p className="ml-[15px] text-white text-lg">Incoming call</p>
@@ -33,7 +38,7 @@ const PhoneRingingComponent: React.FC<PhoneComponentType> = ({
           </button>
           <button
             className="h-[45px] w-[45px] rounded-full bg-red-500 text-white flex items-center justify-center"
-            onClick={() => endCall()}
+            onClick={() => rejectCall()}
           >
             <PhoneOffIcon size={20} />
           </button>
