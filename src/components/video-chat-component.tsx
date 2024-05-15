@@ -1,17 +1,20 @@
 import { FC, RefObject } from "react";
 import { Button } from "./ui/button";
 import { Mic, Phone, Video } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 type VideoChatComponentType = {
   name: string;
   localVideoRef: RefObject<HTMLVideoElement>;
   remoteVideoRef: RefObject<HTMLVideoElement>;
+  initialized: boolean;
 };
 
 const VideoChatComponent: FC<VideoChatComponentType> = ({
   name,
   localVideoRef,
   remoteVideoRef,
+  initialized,
 }) => {
   return (
     <div className="relative bg-slate-600 flex-1 h-full max-h-full overflow-hidden">
@@ -39,7 +42,14 @@ const VideoChatComponent: FC<VideoChatComponentType> = ({
         >
           <Video size={25} />
         </button>
-        <button className="bg-blue-500 text-white rounded-full h-[50px] w-[50px] hover:bg-blue-700 flex items-center justify-center">
+        <button
+          className={cn(
+            " text-white rounded-full h-[50px] w-[50px] flex items-center justify-center",
+            initialized
+              ? "bg-red-600 hover:bg-red-400"
+              : "bg-blue-500 hover:bg-blue-700 "
+          )}
+        >
           <Phone size={24} />
         </button>
         <button

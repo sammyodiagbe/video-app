@@ -208,6 +208,7 @@ const ChatPage = () => {
     try {
       if (!peerConnection?.currentRemoteDescription) {
         await peerConnection?.setRemoteDescription(json);
+        setInitialized(true);
       }
     } catch (error: any) {
       console.log(error);
@@ -239,6 +240,7 @@ const ChatPage = () => {
         name=""
         localVideoRef={localVideoRef}
         remoteVideoRef={remoteVideoRef}
+        initialized={initialized}
       />
       <ChatScreenComponent
         firstname={firstname}
