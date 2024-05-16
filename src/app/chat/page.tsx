@@ -11,12 +11,13 @@ import { SignalType } from "@/utils/types";
 import { decodeJson, encodeJson } from "@/utils/utils";
 import PhoneRingingComponent from "@/components/phone_ringing";
 import { toast } from "@/components/ui/use-toast";
-import VideoCallWrapper from "./videoCallWrapper";
+import VideoCallWrapper from "../../components/videoCallWrapper";
 
 const ChatPage = () => {
   const fetchOrCreateId = useAction(api.queryActions.createNewConversation);
   const searchParams = useSearchParams();
   const friendUsername = searchParams.get("username");
+  const firtsname = searchParams.get("firstname");
   const [conversationId, setConversationId] = useState<string | null>();
 
   useEffect(() => {
@@ -24,6 +25,7 @@ const ChatPage = () => {
       const convoId = await fetchOrCreateId({
         friend_username: friendUsername!,
       });
+
       setConversationId(convoId);
     };
 
@@ -255,11 +257,18 @@ const ChatPage = () => {
   //       conversationId={conversationId}
   //     />
   //   </main>
-  // );
+  // )
+  if (!conversationId) return <p>Loading hold on</p>;
 
-  {
-    !conversationId ? <p></p> : <VideoCallWrapper conversationId="" />;
-  }
+  return (
+    <VideoCallWrapper
+      data={{
+        username: friendUsername!,
+        firstname: firtsname!,
+        conversationId: conversationId!,
+      }}
+    />
+  );
 };
 
 export default ChatPage;

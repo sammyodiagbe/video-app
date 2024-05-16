@@ -14,7 +14,7 @@ type ChatScreenComponentType = {
   firstname: string;
   lastname?: string;
   friend_id: string;
-  initializeCall: Function;
+  call: Function;
   conversationId: string;
   calling: boolean;
   initialized: boolean;
@@ -24,7 +24,7 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
   firstname,
   friend_id,
   username,
-  initializeCall,
+  call,
   conversationId,
   calling,
   initialized,
@@ -79,7 +79,7 @@ const ChatScreenComponent: React.FC<ChatScreenComponentType> = ({
             <Button
               variant={"link"}
               disabled={calling || initialized}
-              onClick={() => initializeCall()}
+              onClick={() => call()}
             >
               <Video />
             </Button>
