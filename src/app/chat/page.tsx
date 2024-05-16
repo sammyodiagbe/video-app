@@ -241,6 +241,7 @@ const ChatPage = () => {
         localVideoRef={localVideoRef}
         remoteVideoRef={remoteVideoRef}
         initialized={initialized}
+        endCall={() => {}}
       />
       <ChatScreenComponent
         firstname={firstname}

@@ -8,6 +8,7 @@ type VideoChatComponentType = {
   localVideoRef: RefObject<HTMLVideoElement>;
   remoteVideoRef: RefObject<HTMLVideoElement>;
   initialized: boolean;
+  endCall: Function;
 };
 
 const VideoChatComponent: FC<VideoChatComponentType> = ({
@@ -15,9 +16,10 @@ const VideoChatComponent: FC<VideoChatComponentType> = ({
   localVideoRef,
   remoteVideoRef,
   initialized,
+  endCall,
 }) => {
   return (
-    <div className="relative bg-slate-600 flex-1 h-full max-h-full overflow-hidden">
+    <div className="relative bg-slate-600 flex-1 h-full max-h-full  overflow-hidden">
       <div className="absolute  h-[200px] top-[20px] right-[20px] rounded-md">
         <video
           ref={localVideoRef}
@@ -49,6 +51,11 @@ const VideoChatComponent: FC<VideoChatComponentType> = ({
               ? "bg-red-600 hover:bg-red-400"
               : "bg-blue-500 hover:bg-blue-700 "
           )}
+          onClick={() => {
+            if (initialized) {
+              endCall();
+            }
+          }}
         >
           <Phone size={24} />
         </button>
