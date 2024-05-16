@@ -140,6 +140,8 @@ const VideoCallWrapper: FC<VideoCallWrapperComponent> = ({ data }) => {
   const linkConnections = async (data: string) => {
     try {
       const remoteHandshake = decodeJson(data);
+      if (peerConnection?.signalingState === "stable") {
+      }
       await peerConnection?.setRemoteDescription(remoteHandshake);
       setEndsConnected(true);
     } catch (error: any) {
@@ -177,6 +179,7 @@ const VideoCallWrapper: FC<VideoCallWrapperComponent> = ({ data }) => {
       await pc?.setLocalDescription(answer);
       sendsignal("answer", conversationId, username, encodeJson(answer));
       setIncomingCall(false);
+      setInCall(true);
     } catch (error: any) {
       console.log(error);
     }
